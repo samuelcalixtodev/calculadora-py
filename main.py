@@ -13,6 +13,7 @@ class Calculadora:
         self.root.bind("<Configure>", lambda e: self.root.geometry(f"{largura_janela}x{altura_janela}+{pos_x}+{pos_y}"))
         self.fixar_btn = ttk.Button(self.root, text="Fixar", command=self.fixar_no_canto)
         self.fixar_btn.pack(pady=5)
+        self.root.attributes("-topmost", True)  # Mantém a janela no topo
 
 
         self.expression = ""

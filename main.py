@@ -14,7 +14,7 @@ class Calculadora:
         
         # Estilo Moderno com suporte a modo claro e escuro
         self.style = ttk.Style()
-        self.style.theme_use("superhero")  # Modo escuro por padrão
+        self.style.theme_use("cyborg")  # Modo escuro por padrão
 
         # Alternar entre modo claro e escuro
         self.root.bind("<F1>", self.toggle_theme)
@@ -22,7 +22,7 @@ class Calculadora:
 
     def toggle_theme(self, event=None):
         current_theme = self.style.theme_use()
-        new_theme = "flatly" if current_theme == "superhero" else "superhero"
+        new_theme = "flatly" if current_theme == "cyborg" else "cyborg"
         self.style.theme_use(new_theme)
 
     def create_widgets(self):

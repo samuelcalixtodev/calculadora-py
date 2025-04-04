@@ -7,15 +7,9 @@ class Calculadora:
     def __init__(self, root):
         self.root = root
         self.root.title("Calculadora")
-        self.root.attributes('-fullscreen', True)  # Tela cheia
+        self.root.attributes('', True)  # Tela cheia
         self.root.bind("<Escape>", lambda e: self.root.attributes('-fullscreen', False))  # Sair do modo tela cheia com Esc
-        self.root.geometry(f"{largura_janela}x{altura_janela}+{pos_x}+{pos_y}")
-        self.root.bind("<Configure>", lambda e: self.root.geometry(f"{largura_janela}x{altura_janela}+{pos_x}+{pos_y}"))
-        self.fixar_btn = ttk.Button(self.root, text="Fixar", command=self.fixar_no_canto)
-        self.fixar_btn.pack(pady=5)
-        self.root.attributes("-topmost", True)  # Mantém a janela no topo
-
-
+        
         self.expression = ""
         
         # Estilo Moderno com suporte a modo claro e escuro

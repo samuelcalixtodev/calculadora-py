@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-import ttkboostrap as ttk
+#import ttkboostrap as ttk
 import math
 
 class Calculadora:

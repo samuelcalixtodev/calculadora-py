@@ -7,17 +7,10 @@ class Calculadora:
     def __init__(self, root):
         self.root = root
         self.root.title("Calculadora")
-        self.root.attributes('', True)  # Tela cheia
-        self.root.bind("<Escape>", lambda e: self.root.attributes('-fullscreen', False))  # Sair do modo tela cheia com Esc
+        self.root.geometry("400x500") 
         
         self.expression = ""
         
-        # Estilo Moderno com suporte a modo claro e escuro
-        self.style = ttk.Style()
-        self.style.theme_use("cyborg")  # Modo escuro por padrão
-
-        # Alternar entre modo claro e escuro
-        self.root.bind("<F1>", self.toggle_theme)
         self.create_widgets()
 
     def toggle_theme(self, event=None):
@@ -89,6 +82,6 @@ class Calculadora:
 
 # Iniciar a calculadora
 if __name__ == "__main__":
-    root = ttk.Tk(themename="darkly")
+    root = tk.Tk()
     app = Calculadora(root)
     root.mainloop()

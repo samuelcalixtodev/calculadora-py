@@ -89,6 +89,6 @@ class Calculadora:
 
 # Iniciar a calculadora
 if __name__ == "__main__":
-    root = ttk.Window(themename="darkly")
+    root = ttk.Tk(themename="darkly")
     app = Calculadora(root)
     root.mainloop()

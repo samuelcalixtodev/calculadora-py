@@ -1,25 +1,36 @@
 import tkinter as tk
 import customtkinter as ctk
 import math
+import darkdetect
+import os
+import sys
 
+# Configuração visual
+ctk.set_appearance_mode(darkdetect.theme().lower())
 
-
-ctk.set_appearance_mode("dark")
-ctk.set_default_color_theme("black")
-
+# Cores personalizadas
+OPERATOR_COLOR = "#FF6F00"
+NUMBER_COLOR = "#2C2C2C"
 
 class Calculadora:
     def __init__(self, root):
         self.root = root
-        self.root.title("Calculadora Moderna")
+        self.root.title("Calculadora")
         self.root.geometry("360x540")
         self.root.resizable(False, False)
-        self.expression = ""
+        self.expressao = ""
 
-        self.display = ctk.CTkEntry(self.root, font=("Arial", 24), justify="right", height=60)
+        # Display da calculadora
+        self.display = ctk.CTkEntry(
+            self.root,
+            placeholder_text="0",
+            placeholder_text_color="#AAAAAA",
+            font=("Arial", 24),
+            justify="right",
+            height=60
+        )
         self.display.grid(row=0, column=0, columnspan=4, padx=10, pady=15, sticky="nsew")
 
-        # Layout em grid com sombra simulada
         botoes = [
             ["%", "CE", "C", "⌫"],
             ["1/x", "x²", "³√x", "÷"],
@@ -31,87 +42,81 @@ class Calculadora:
 
         for i, linha in enumerate(botoes):
             for j, texto in enumerate(linha):
-                # Botão "0" ocupa duas colunas
-                colspan = 2 if texto == "0" else 1
-                width = 170 if texto == "0" else 80
-
-                btn = ctk.CTkButton(
+                cor = OPERATOR_COLOR if texto in ["÷", "×", "-", "+"] else NUMBER_COLOR
+                botao = ctk.CTkButton(
                     self.root,
                     text=texto,
-                    width=width,
-                    height=60,
-                    corner_radius=10,
-                    font=("Arial", 18),
-                    command=lambda b=texto: self.on_button_click(b)
+                    font=("Arial", 24),
+                    fg_color=cor,
+                    text_color="#FFFFFF",
+                    hover_color="#FF8800",
+                    corner_radius=15,
+                    border_width=2,
+                    border_color="#000000",
+                    command=lambda b=texto: self.ao_clicar(b)
                 )
-                btn.grid(row=i + 1, column=j if texto != "0" else 1, columnspan=colspan, padx=4, pady=4, sticky="nsew")
+                botao.grid(row=i+1, column=j, padx=5, pady=5, sticky="nsew")
 
-        # Ajuste das colunas para preencher a tela
-        for col in range(4):
-            self.root.grid_columnconfigure(col, weight=1)
-        for row in range(7):
-            self.root.grid_rowconfigure(row, weight=1)
+        for i in range(4):
+            self.root.grid_columnconfigure(i, weight=1)
+        for i in range(7):
+            self.root.grid_rowconfigure(i, weight=1)
 
-    def on_button_click(self, button):
+    def atualizar_display(self, texto):
+        self.display.delete(0, tk.END)
+        self.display.insert(tk.END, texto)
+
+    def calcular(self, operacao):
         try:
-            if button == "C":
-                self.expression = ""
-                self.display.delete(0, tk.END)
-            elif button == "⌫":
-                self.expression = self.expression[:-1]
-                self.display.delete(0, tk.END)
-                self.display.insert(tk.END, self.expression)
-            elif button == "=":
-                expression = self.expression.replace("÷", "/").replace("×", "*").replace(",", ".")
-                result = eval(expression)
-                self.display.delete(0, tk.END)
-                self.display.insert(tk.END, str(result).replace(".", ","))
-                self.expression = str(result).replace(".", ",")
-            elif button == "±":
-                if self.expression:
-                    if self.expression.startswith("-"):
-                        self.expression = self.expression[1:]
+            valor = float(self.expressao.replace(",", "."))
+            if operacao == "1/x":
+                return 1 / valor
+            elif operacao == "x²":
+                return valor ** 2
+            elif operacao == "³√x":
+                return valor ** (1/3)
+            elif operacao == "%":
+                return valor / 100
+        except:
+            return "Erro"
+
+    def ao_clicar(self, tecla):
+        try:
+            if tecla in ["C", "CE"]:
+                self.expressao = ""
+                self.atualizar_display("")
+            elif tecla == "⌫":
+                self.expressao = self.expressao[:-1]
+                self.atualizar_display(self.expressao)
+            elif tecla == "=":
+                expressao_formatada = self.expressao.replace("÷", "/").replace("×", "*").replace(",", ".")
+                resultado = eval(expressao_formatada)
+                resultado_str = str(resultado).replace(".", ",")
+                self.expressao = resultado_str
+                self.atualizar_display(resultado_str)
+            elif tecla in ["1/x", "x²", "³√x", "%"]:
+                resultado = self.calcular(tecla)
+                resultado_str = str(resultado).replace(".", ",") if resultado != "Erro" else "Erro"
+                self.expressao = resultado_str if resultado != "Erro" else ""
+                self.atualizar_display(resultado_str)
+            elif tecla == "±":
+                if self.expressao:
+                    if self.expressao.startswith("-"):
+                        self.expressao = self.expressao[1:]
                     else:
-                        self.expression = "-" + self.expression
-                    self.display.delete(0, tk.END)
-                    self.display.insert(tk.END, self.expression)
-            elif button == "1/x":
-                result = 1 / float(self.expression.replace(",", "."))
-                self.display.delete(0, tk.END)
-                self.display.insert(tk.END, str(result).replace(".", ","))
-                self.expression = str(result).replace(".", ",")
-            elif button == "x²":
-                result = math.pow(float(self.expression.replace(",", ".")), 2)
-                self.display.delete(0, tk.END)
-                self.display.insert(tk.END, str(result).replace(".", ","))
-                self.expression = str(result).replace(".", ",")
-            elif button == "³√x":
-                result = float(self.expression.replace(",", ".")) ** (1/3)
-                self.display.delete(0, tk.END)
-                self.display.insert(tk.END, str(result).replace(".", ","))
-                self.expression = str(result).replace(".", ",")
-            elif button == "%":
-                result = float(self.expression.replace(",", ".")) / 100
-                self.display.delete(0, tk.END)
-                self.display.insert(tk.END, str(result).replace(".", ","))
-                self.expression = str(result).replace(".", ",")
-            elif button == "CE":
-                self.display.delete(0, tk.END)
-                self.expression = ""
-            elif button == ",":
-                if "," not in self.expression:
-                    self.expression += ","
+                        self.expressao = "-" + self.expressao
+                    self.atualizar_display(self.expressao)
+            elif tecla == ",":
+                if "," not in self.expressao:
+                    self.expressao += ","
                     self.display.insert(tk.END, ",")
             else:
-                self.expression += button
-                self.display.insert(tk.END, button)
+                self.expressao += tecla
+                self.display.insert(tk.END, tecla)
         except:
-            self.display.delete(0, tk.END)
-            self.display.insert(tk.END, "Erro")
-            self.expression = ""
+            self.atualizar_display("Erro")
+            self.expressao = ""
 
-
-# Executar app
 if __name__ == "__main__":
     root = ctk.CTk()
     app = Calculadora(root)

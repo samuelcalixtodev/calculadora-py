@@ -42,7 +42,6 @@ python main.py
 
 <img src="screenshot.png" alt="Screenshot da calculadora" width="400"/>
 
-> *Adicione uma imagem chamada `screenshot.png` do seu projeto para aparecer aqui!*
 
 ## 📁 Estrutura do Projeto
 
